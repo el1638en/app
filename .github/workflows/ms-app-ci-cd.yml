@@ -1,0 +1,44 @@
+name: Java CI/CD for ms-app
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+#      - name: Run Build
+#        run: npm run build
+
+#      - name: Build and analyze
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: mvn verify sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=el1638en -Dsonar.projectKey=el1638en_users
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=el1638en
+            -Dsonar.projectKey=el1638en_app
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.typescript.lcov.reportPaths=coverage/app/lcov-report/lcov.info
+#            -Dsonar.ts.tslintconfigpath=tslint.json
+            -Dsonar.exclusions=node_modules/**,assets/**,*.spec.ts
+            -Dsonar.test.inclusions=*.spec.ts
+        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: 7e51d0cdd637ad40527a4e5b48d7c87c321cf8b6
+#          SONAR_TOKEN: ${{ secrets. SONARCLOUD_TOKEN }}
+#  SONAR_TOKEN : 7e51d0cdd637ad40527a4e5b48d7c87c321cf8b6
