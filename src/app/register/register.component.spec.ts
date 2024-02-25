@@ -5,20 +5,18 @@ import { AuthService } from '../_services/auth.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockService } from '../utils/mock-service.spec';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
-  let authService: AuthService;
+  let authService;
   let router: Router;
-
 
   beforeEach(() => {
     authService = MockService.mock('AuthService', ['login', 'register']);
     router = MockService.mock('Router', ['navigate']);
   });
-
-
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -44,4 +42,16 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('register new user', () => {
+    // GIVEN
+    authService.register.and.returnValue(of({}));
+    component.onSubmit();
+
+    // WHEN
+    fixture.detectChanges();
+
+    // THEN
+    expect(authService.register).toHaveBeenCalledTimes(1);
+    expect(router.navigate).toHaveBeenCalledTimes(1);
+  });
 });

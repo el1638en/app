@@ -27,24 +27,24 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    this.authService.login(this.form).subscribe(
-      data => {
-        this.tokenStorageService.saveToken(data.accessToken);
-        this.tokenStorageService.saveUser(data);
-
-        this.isLoginFailed = false;
-        this.isLoggedIn = true;
-        this.roles = this.tokenStorageService.getUser().roles;
-        this.router.navigate(['/profile']);
-      },
-      err => {
-        this.errorMessage = err.error.message;
-        this.isLoginFailed = true;
-      }
-    );
+    // this.authService.login(this.form).subscribe(
+    //   data => {
+    //     this.tokenStorageService.saveToken(data.accessToken);
+    //     this.tokenStorageService.saveUser(data);
+    //
+    //     this.isLoginFailed = false;
+    //     this.isLoggedIn = true;
+    //     this.roles = this.tokenStorageService.getUser().roles;
+    //     this.router.navigate(['/profile']);
+    //   },
+    //   err => {
+    //     this.errorMessage = err.error.message;
+    //     this.isLoginFailed = true;
+    //   }
+    // );
   }
 
   reloadPage() {
-    window.location.reload();
+    // window.location.reload();
   }
 }

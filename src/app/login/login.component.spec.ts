@@ -4,18 +4,48 @@ import { LoginComponent } from './login.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from '../_services/auth.service';
 import { TokenStorageService } from '../_services/token-storage.service';
-import { UserService } from '../_services/user.service';
+import { of } from 'rxjs';
 import { MockService } from '../utils/mock-service.spec';
 
 import { Router } from '@angular/router';
+import { User } from '../core/models/user';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let authService: AuthService;
-  let tokenStorageService: TokenStorageService;
-  let router: Router;
+  let authService;
+  let tokenStorageService;
+  let router;
 
+  const user: User = {
+    id: 1,
+    firstName: 'firstname',
+    postCode: '75001',
+    lastName: 'last name',
+    address: 'Rue du faubourg St-Honoré',
+    city: 'Paris',
+    longitude: {
+      min: 0,
+      max: 100
+    },
+    latitude: {
+      min: 0,
+      max: 100
+    },
+    phone: '000000000',
+    birthdate: '12/05/2000',
+    email: 'email@test.com',
+    socialSecurityNumber: '351611',
+    userId: 1,
+    roles:  ['user', 'admin']
+  };
+
+  const jwtResponse = {
+    accessToken: 'accessToken',
+    id: 1,
+    email: 'test@test.com',
+    roles: ['user', 'admin']
+  };
 
   beforeEach(() => {
     authService = MockService.mock('AuthService', ['login', 'register']);
@@ -43,10 +73,32 @@ describe('LoginComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    tokenStorageService.getToken.and.returnValue('token');
+    tokenStorageService.getUser.and.returnValue(user);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect( component.isLoggedIn).toEqual(true);
+    expect(tokenStorageService.getToken).toHaveBeenCalled();
+    expect(tokenStorageService.getUser).toHaveBeenCalled();
   });
+
+  // it('login user into the systeme', () => {
+  //   // GIVEN
+  //   authService.login.and.returnValue(of({jwtResponse}));
+  //   component.onSubmit();
+  //
+  //   // WHEN
+  //   fixture.detectChanges();
+  //
+  //   // THEN
+  //   expect(tokenStorageService.saveToken).toHaveBeenCalledTimes(1);
+  //   expect(tokenStorageService.saveUser).toHaveBeenCalledTimes(1);
+  //   expect(tokenStorageService.getUser).toHaveBeenCalledTimes(2);
+  //   expect(router.navigate).toHaveBeenCalledTimes(1);
+  //   expect( component.isLoggedIn).toEqual(true);
+  //   expect( component.isLoginFailed).toEqual(false);
+  // });
 });

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { User } from '../core/models/user';
 import { Hospital } from '../core/models/hospital';
-import { Observable, Subject, take, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { UserService } from '../_services/user.service';
 import { TokenStorageService } from '../_services/token-storage.service';
 import { SpecialtyGroup } from '../core/models/specialty-group';
@@ -28,85 +28,86 @@ export class BookingComponent {
   hospitals$!: Hospital[];
   speGroups$!: SpecialtyGroup[];
   specialties$!: Specialty[];
-  speGroup!:any;
+  speGroup!: any;
   isSuccessful = false;
   isLoggedIn = false;
   perimeter!: any;
 
   private readonly unsub$ = new Subject();
 
-  constructor(private userService: UserService, private tokenStorageService: TokenStorageService) { }
+  constructor(private userService: UserService, private tokenStorageService: TokenStorageService) {
+  }
 
   ngOnInit() {
-  //   if (this.tokenStorageService.getToken()) {
-  //     this.isLoggedIn = true;
-  //     this.currentUser = this.tokenStorageService.getUser();
-  //     this.registeredUser =this.userService.getUserByEmail(this.currentUser.email).pipe(
-  //       takeUntil(this.unsubscribe$)).subscribe(
-  //         (data) => {
-  //       this.registeredUser = data;
-  //       this.userService.getUserContent(this.registeredUser.id).subscribe(
-  //         (data) => {
-  //           this.patient = data;
-  //           this.patientFullAddress = this.patient.address+', '+this.patient.postCode+', '+this.patient.city;
-  //         }
-  //       );
-  //         }
-  //       );
-  //   }
-  //
-  //   this.userService.getAllSpecialityGroups().pipe(
-  //     takeUntil(this.unsub$)).subscribe(
-  //     (data)=>{
-  //       this.speGroups$ = data;
-  //       this.userService.getSpecialitiesBySpecialityGroupByName(this.speGroups$[0].name).subscribe(
-  //     data => {
-  //       this.specialties$ = data;
-  //       let speGroupSelectValue = document.getElementById("inputSpecialtyGroup")?.nodeValue;
-  //       let speSelect = document.getElementById("inputSpecialty");
-  //       let speSelectLabel = document.getElementById("inputSpecialtyLabel");
-  //       if(speGroupSelectValue==null){
-  //         speSelect?.setAttribute("style", "visibility:hidden");
-  //         speSelectLabel?.setAttribute("style", "visibility:hidden");
-  //       }
-  //     }
-  //   );
-  // }
-  //     );
-}
-
-
-  onChange(e:Event){
-    const target = e.target as HTMLSelectElement;
-  if (target) {
-    this.form = {inputSpecialtyGroup : target.value};
+    // if (this.tokenStorageService.getToken()) {
+    //   this.isLoggedIn = true;
+    //   this.currentUser = this.tokenStorageService.getUser();
+    //   this.registeredUser = this.userService.getUserByEmail(this.currentUser.email).pipe(
+    //     takeUntil(this.unsubscribe$)).subscribe(
+    //     (data) => {
+    //       this.registeredUser = data;
+    //       this.userService.getUserContent(this.registeredUser.id).subscribe(
+    //         (data) => {
+    //           this.patient = data;
+    //           this.patientFullAddress = this.patient.address + ', ' + this.patient.postCode + ', ' + this.patient.city;
+    //         }
+    //       );
+    //     }
+    //   );
+    // }
+    //
+    // this.userService.getAllSpecialityGroups().pipe(
+    //   takeUntil(this.unsub$)).subscribe(
+    //   (data) => {
+    //     this.speGroups$ = data;
+    //     this.userService.getSpecialitiesBySpecialityGroupByName(this.speGroups$[0].name).subscribe(
+    //       data => {
+    //         this.specialties$ = data;
+    //         let speGroupSelectValue = document.getElementById('inputSpecialtyGroup')?.nodeValue;
+    //         let speSelect = document.getElementById('inputSpecialty');
+    //         let speSelectLabel = document.getElementById('inputSpecialtyLabel');
+    //         if (speGroupSelectValue == null) {
+    //           speSelect?.setAttribute('style', 'visibility:hidden');
+    //           speSelectLabel?.setAttribute('style', 'visibility:hidden');
+    //         }
+    //       }
+    //     );
+    //   }
+    // );
   }
+
+
+  onChange(e: Event) {
+    const target = e.target as HTMLSelectElement;
+    if (target) {
+      this.form = {inputSpecialtyGroup: target.value};
+    }
     this.userService.getSpecialitiesBySpecialityGroupById(parseInt(target.value)).subscribe(
       data => {
         this.specialties$ = data;
-        let speSelect = document.getElementById("inputSpecialty");
-        let speSelectLabel = document.getElementById("inputSpecialtyLabel");
-        if(target.value==null || this.specialties$[0] === undefined){
-          speSelect?.setAttribute("style", "visibility:hidden");
-          speSelectLabel?.setAttribute("style", "visibility:hidden");
-        }else{
-          speSelect?.setAttribute("style", "visibility:visible");
-          speSelect?.setAttribute("style", "visibility:visible");
-          this.form = {inputSpecialty : this.specialties$[0].id};
+        let speSelect = document.getElementById('inputSpecialty');
+        let speSelectLabel = document.getElementById('inputSpecialtyLabel');
+        if (target.value == null || this.specialties$[0] === undefined) {
+          speSelect?.setAttribute('style', 'visibility:hidden');
+          speSelectLabel?.setAttribute('style', 'visibility:hidden');
+        } else {
+          speSelect?.setAttribute('style', 'visibility:visible');
+          speSelect?.setAttribute('style', 'visibility:visible');
+          this.form = {inputSpecialty: this.specialties$[0].id};
         }
       }
-    )
+    );
   }
 
   onSubmit() {
-    console.log("form submitted");
+    console.log('form submitted');
     this.form.patientFullAddress = this.patientFullAddress;
     this.form.latitude = this.patient.latitude;
     this.form.longitude = this.patient.longitude;
     this.userService.getPerimeter().subscribe(
-      data=>{
+      data => {
         this.perimeter = data;
-        this.perimeter = this.perimeter/1000;
+        this.perimeter = this.perimeter / 1000;
       }
     );
     this.userService.getNearestHospital(this.form).subscribe(
@@ -117,6 +118,6 @@ export class BookingComponent {
         this.isSuccessful = false;
       }
     );
-    this.isSuccessful= true;
+    this.isSuccessful = true;
   }
 }

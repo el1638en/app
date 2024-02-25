@@ -5,12 +5,13 @@ import { TokenStorageService } from '../_services/token-storage.service';
 import { UserService } from '../_services/user.service';
 import { MockService } from '../utils/mock-service.spec';
 import { User } from '../core/models/user';
+import { of } from 'rxjs';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let fixture: ComponentFixture<ProfileComponent>;
-  let userService: UserService;
-  let tokenStorageService: TokenStorageService;
+  let userService;
+  let tokenStorageService;
 
 
   beforeEach(() => {
@@ -18,9 +19,31 @@ describe('ProfileComponent', () => {
       'getUserByEmail', 'getNearestHospital', 'registerPatientInfo', 'getAllSpecialityGroups', 'getSpecialitiesBySpecialityGroupByName',
       'getSpecialitiesBySpecialityGroupById', 'getPerimeter']);
     tokenStorageService = MockService.mock('TokenStorageService', ['signOut', 'saveToken', 'getToken', 'saveUser', 'getUser']);
+
   });
 
-
+  const user: User = {
+    id: 1,
+    firstName: 'firstname',
+    postCode: '75001',
+    lastName: 'last name',
+    address: 'Rue du faubourg St-Honoré',
+    city: 'Paris',
+    longitude: {
+      min: 0,
+      max: 100
+    },
+    latitude: {
+      min: 0,
+      max: 100
+    },
+    phone: '000000000',
+    birthdate: '12/05/2000',
+    email: 'email@test.com',
+    socialSecurityNumber: '351611',
+    userId: 1,
+    roles:  ['']
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,12 +61,35 @@ describe('ProfileComponent', () => {
     }).compileComponents();
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
+    tokenStorageService.getToken.and.returnValue('token');
+    tokenStorageService.getUser.and.returnValue(user);
+    userService.getUserByEmail.and.returnValue(of(user));
+    userService.getUserContent.and.returnValue(of(user));
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    // @ts-ignore
-    tokenStorageService.getUser.email = "email@test.com";
     expect(component).toBeTruthy();
+    // expect(tokenStorageService.getToken).toHaveBeenCalled();
+    // expect(tokenStorageService.getUser).toHaveBeenCalled();
+    // expect(userService.getUserByEmail).toHaveBeenCalled();
+    // expect(userService.getUserContent).toHaveBeenCalled();
+    // expect( component.isLoggedIn).toEqual(true);
   });
+
+
+  // it('should submit', () => {
+  //   // GIVEN
+  //   userService.registerPatientInfo.and.returnValue(of('Infos registered successfully!'));
+  //   component.onSubmit();
+  //
+  //   // WHEN
+  //   fixture.detectChanges();
+  //
+  //   // THEN
+  //   expect(userService.registerPatientInfo).toHaveBeenCalledTimes(1);
+  //   expect( component.isSuccessful).toEqual(true);
+  //   expect( component.infoRegisteredFailed).toEqual(false);
+  // });
+
 });
