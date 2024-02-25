@@ -34,7 +34,7 @@ jobs:
             -Dsonar.sources=src
             -Dsonar.tests=src
             -Dsonar.typescript.lcov.reportPaths=coverage/app/lcov-report/lcov.info
-            -Dsonar.exclusions=node_modules/**,assets/**,**.spec.ts
+            -Dsonar.exclusions=node_modules/**,assets/**,*.spec.ts
             -Dsonar.test.inclusions=*.spec.ts
         env:
           SONAR_TOKEN: 7e51d0cdd637ad40527a4e5b48d7c87c321cf8b6
